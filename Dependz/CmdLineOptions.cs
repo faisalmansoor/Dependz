@@ -27,7 +27,7 @@ namespace Dependz
                                       v =>ProcessName = v
                                   },
                                   {
-                                      "v", "Display all dependency, but, default only failed dependency are displayed.",
+                                      "v", "Display all dependency, by default only failed dependency are displayed.",
                                       v => 
                                       { 
                                           if (v != null)
@@ -44,6 +44,12 @@ namespace Dependz
 
             options.Parse(args);
 
+            if (ShowHelp)
+            {
+                PrintHelp(options);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(ProcmonLogFilePath))
             {
                 throw new OptionException("Process monitor log file not provided.", "i");
@@ -52,12 +58,6 @@ namespace Dependz
             if (string.IsNullOrWhiteSpace(ProcessName))
             {
                 throw new OptionException("Process name is not provided.", "p|process");
-            }
-
-            if (ShowHelp)
-            {
-                PrintHelp(options);
-                return;
             }
         }
 
@@ -75,12 +75,17 @@ namespace Dependz
             try
             {
                 options = new CmdLineOptions(args);
+                if(options.ShowHelp)
+                {
+                    return null;
+                }
             }
             catch (OptionException e)
             {
                 Console.Write("DependencyDebugger: ");
                 Console.WriteLine(e.Message);
                 Console.WriteLine("Try `DependencyDebugger --help' for more information.");
+                return null;
             }
 
             return options;
