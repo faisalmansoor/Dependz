@@ -63,7 +63,7 @@ namespace Dependz
 
         static void PrintHelp(OptionSet p)
         {
-            Console.WriteLine("Usage: DependencyDebugger [OPTIONS]+");
+            Console.WriteLine("Usage: Dependz [OPTIONS]+");
             Console.WriteLine();
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
@@ -82,9 +82,9 @@ namespace Dependz
             }
             catch (OptionException e)
             {
-                Console.Write("DependencyDebugger: ");
+                Console.Write("Dependz: ");
                 Console.WriteLine(e.Message);
-                Console.WriteLine("Try `DependencyDebugger --help' for more information.");
+                Console.WriteLine("Try `Dependz --help' for more information.");
                 return null;
             }
 
