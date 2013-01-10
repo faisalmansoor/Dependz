@@ -27,6 +27,7 @@ namespace Dependz
             var dependecies = from evnt in parser.GetEvents()
                          where String.Compare(evnt.Process_Name, options.ProcessName, true) == 0 &&
                                (evnt.Operation == PmOperations.CreateFile ||
+                               evnt.Operation == PmOperations.LoadImage ||
                                 evnt.Operation == PmOperations.CreateFileMapping) &&
                                String.Compare(evnt.PathExt, ".dll", true) == 0
                          group evnt by evnt.PathFileName.ToUpper();
@@ -54,8 +55,9 @@ namespace Dependz
                         pmDependency.AddPath(pmEvent.Path, DependencyStatus.NotFound);
                         break;
                     case PmResults.ACCESS_DENIED:
-                        pmDependency.AddPath(pmEvent.Path, DependencyStatus.AccessDenied);
+                        pmDependency.AddPath(pmEvent.Path, DependencyStatus.Resolved, true);
                         break;
+                    case PmResults.SUCCESS:
                     case PmResults.FILE_LOCKED_WITH_ONLY_READERS:
                         pmDependency.AddPath(pmEvent.Path, DependencyStatus.Resolved);
                         break;
@@ -69,7 +71,7 @@ namespace Dependz
             Console.WriteLine("Process: {0}", options.ProcessName);
             if(!options.Verbose)
             {
-                List<Dependency> unresolved = dependencies.Where( d => d.Status != DependencyStatus.Resolved).ToList();
+                List<Dependency> unresolved = dependencies.Where( d => d.Status != DependencyStatus.Resolved || d.AccessDenied).ToList();
                 if(unresolved.Count() == 0)
                 {
                     Console.WriteLine("No Unresolved Dependencies found.");
@@ -89,12 +91,13 @@ namespace Dependz
         {
             foreach (Dependency dependency in dependencies)
             {
-                Console.Write("{0} - {1}: ", dependency.Name, dependency.Status);
+                Console.Write("{0} - {1}: ", dependency.Name, dependency.AccessDenied ? "AccessDenied" : dependency.Status.ToString());
+                
                 if (dependency.Status == DependencyStatus.Resolved)
                 {
                     Console.Write("{0}", dependency.ResolvedPath );
                 }
-                
+
                 Console.WriteLine();
                 Console.WriteLine("Probed Paths:");
                 foreach (var probedPath in dependency.ProbedPaths)

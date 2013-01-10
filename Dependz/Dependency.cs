@@ -9,8 +9,7 @@ namespace Dependz
     {
         Unknown,
         NotFound,
-        Resolved,
-        AccessDenied
+        Resolved
     }
 
     public class Dependency
@@ -18,8 +17,9 @@ namespace Dependz
         public readonly List<string> ProbedPaths = new List<string>();
         public string ResolvedPath { get; set; }
         public DependencyStatus Status { get; private set; }
+        public bool AccessDenied { get; set; }
 
-        public void AddPath(string path, DependencyStatus newStatus)
+        public void AddPath(string path, DependencyStatus newStatus, bool accessDenied = false)
         {
             if(!ProbedPaths.Contains(path))
             {
@@ -31,7 +31,12 @@ namespace Dependz
                 ResolvedPath = path;
             }
 
-            Status = newStatus;
+            if (Status != DependencyStatus.Resolved)
+            {
+                Status = newStatus;
+            }
+
+            AccessDenied = AccessDenied | accessDenied;
         }
 
         public string Name

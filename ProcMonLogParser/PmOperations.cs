@@ -7,6 +7,7 @@
         public static string CreateFileMapping = "CreateFileMapping";
         public static string DeviceIoControl = "DeviceIoControl";
         public static string FileSystemControl = "FileSystemControl";
+        public static string LoadImage = "Load Image";
         public static string LockFile = "LockFile";
         public static string NotifyChangeDirectory = "NotifyChangeDirectory";
         public static string QueryAllInformationFile = "QueryAllInformationFile";
